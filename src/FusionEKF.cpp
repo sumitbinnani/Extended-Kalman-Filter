@@ -95,12 +95,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       float phi = measurement_pack.raw_measurements_[1];
       float rho_dot = measurement_pack.raw_measurements_[2];
 
-      // normalize phi
-      double width = 2 * M_PI;   //
-      double offsetValue = phi + M_PI;   // value relative to 0
-      phi = (offsetValue - (floor(offsetValue / width) * width)) - M_PI;
-
-
       px = rho * cos(phi);
       py = rho * sin(phi);
     }
@@ -135,10 +129,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   // Update the state transition matrix F according to the new elapsed time
   ekf_.F_(0, 2) = dt;
   ekf_.F_(1, 3) = dt;
-
-  // new covariance matrix
-  float noise_ax = 9.0;
-  float noise_ay = 9.0;
 
   float dt_2 = dt * dt;
   float dt_3 = dt_2 * dt / 2.0;

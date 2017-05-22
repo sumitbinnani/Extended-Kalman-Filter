@@ -52,17 +52,18 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   float phi = atan2(py, px);
   float rho_dot = (rho != 0 ? (px * vx + py * vy) / rho : 0);
 
-  // normalize phi
-  double width = 2 * M_PI;   //
-  double offsetValue = phi + M_PI;   // value relative to 0
-  phi = (offsetValue - (floor(offsetValue / width) * width)) - M_PI;
-
   // define predicted position and speed
   VectorXd z_pred(3);
   z_pred << rho, phi, rho_dot;
 
   // measurement update
   VectorXd y = z - z_pred;
+
+  // normalize angle
+  double width = 2 * M_PI;   //
+  double offsetValue = y(1) + M_PI;   // value relative to 0
+  y(1) = (offsetValue - (floor(offsetValue / width) * width)) - M_PI;
+
   MatrixXd PHt = P_ * H_.transpose();
   MatrixXd S = H_ * PHt + R_;
   MatrixXd K = PHt * S.inverse();
